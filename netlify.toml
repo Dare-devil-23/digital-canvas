@@ -1,5 +1,5 @@
 [build]
-  base = "DigitalCanvas/"
+  base = "."
   publish = "dist/public"
   command = "npm run build"
 
