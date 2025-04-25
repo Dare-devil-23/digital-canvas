@@ -5,12 +5,15 @@ import {
   setActiveTool,
   toggleShapesMenu,
   selectShape,
+  setStrokeWidth,
+  undo,
+  redo,
 } from "../store/canvasSlice";
 import { ToolType, ShapeType } from "../types/canvas";
 import ToolButton from "./ToolButton";
 import {
   MousePointer,
-  Hand,
+  // Hand,
   Pen,
   Highlighter,
   Eraser,
@@ -19,7 +22,9 @@ import {
   ArrowRight,
   Type,
   Image as ImageIcon,
-  MoreHorizontal,
+  Shapes,
+  Undo,
+  Redo,
 } from "lucide-react";
 
 export default function ToolbarPanel() {
@@ -30,6 +35,7 @@ export default function ToolbarPanel() {
 
   const handleToolClick = (tool: ToolType) => {
     dispatch(setActiveTool(tool));
+    dispatch(setStrokeWidth(tool === ToolType.MARKER ? 4 : 2));
   };
 
   const handleShapesClick = () => {
@@ -38,6 +44,14 @@ export default function ToolbarPanel() {
 
   const handleShapeSelect = (shape: ShapeType) => {
     dispatch(selectShape(shape));
+  };
+
+  const handleUndo = () => {
+    dispatch(undo());
+  };
+  
+  const handleRedo = () => {
+    dispatch(redo());
   };
 
   const handleImageUpload = () => {
@@ -71,7 +85,7 @@ export default function ToolbarPanel() {
 
   return (
     <motion.div
-      className="absolute left-4 bottom-20 md:bottom-4 md:top-1/2 transform -translate-y-1/2 bg-white dark:bg-uibg rounded-xl shadow-md flex flex-col h-fit items-center py-3 px-2 z-10"
+      className="absolute left-4 bottom-20 md:bottom-4 transform -translate-y-1/2 bg-background dark:bg-uibg rounded-xl shadow-md flex flex-col h-fit items-center pt-3 px-2 z-10"
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -84,13 +98,13 @@ export default function ToolbarPanel() {
         shortcut="V"
       />
 
-      <ToolButton
+      {/* <ToolButton
         name="Hand"
         icon={Hand}
         active={activeTool === ToolType.HAND}
         onClick={() => handleToolClick(ToolType.HAND)}
         shortcut="H"
-      />
+      /> */}
 
       <ToolButton
         name="Pen"
@@ -119,7 +133,7 @@ export default function ToolbarPanel() {
       <div className="relative">
         <ToolButton
           name="Shapes"
-          icon={MoreHorizontal}
+          icon={Shapes}
           active={activeTool === ToolType.SHAPES}
           onClick={handleShapesClick}
           shortcut="S"
@@ -128,7 +142,7 @@ export default function ToolbarPanel() {
         <AnimatePresence>
           {shapesMenuOpen && (
             <motion.div
-              className="absolute left-full ml-3 bg-white dark:bg-uibg rounded-lg shadow-md flex p-2"
+              className="absolute left-full ml-3 bg-background dark:bg-uibg rounded-lg shadow-md flex p-2"
               initial={{ opacity: 0, scale: 0.9, x: -10 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.9, x: -10 }}
@@ -179,6 +193,24 @@ export default function ToolbarPanel() {
         active={activeTool === ToolType.IMAGE}
         onClick={handleImageUpload}
         shortcut="I"
+      />
+      
+      {/* Separator line */}
+      <div className="w-full h-px bg-black/20 dark:bg-uiborder my-2"></div>
+      
+      {/* Undo/Redo buttons */}
+      <ToolButton
+        name="Undo"
+        icon={Undo}
+        onClick={handleUndo}
+        shortcut="⌘Z"
+      />
+      
+      <ToolButton
+        name="Redo"
+        icon={Redo}
+        onClick={handleRedo}
+        shortcut="⌘⇧Z"
       />
     </motion.div>
   );

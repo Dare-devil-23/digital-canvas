@@ -6,6 +6,7 @@ import ToolbarPanel from '@/components/ToolbarPanel';
 import ColorPalette from '@/components/ColorPalette';
 import TopControls from '@/components/TopControls';
 import ZoomControls from '@/components/ZoomControls';
+import GridFilter from '@/components/GridFilter';
 import MobileToolbarToggle from '@/components/MobileToolbarToggle';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 
@@ -53,6 +54,7 @@ export default function Whiteboard() {
         <ColorPalette />
       </div>
       
+      <GridFilter />
       <TopControls />
       <ZoomControls />
       

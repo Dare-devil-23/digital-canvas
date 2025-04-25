@@ -26,7 +26,7 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
     const canvasElement = canvasRef.current;
     if (!canvasElement) return;
     
-    const handleMouseDown = (e: MouseEvent | TouchEvent) => {
+    const handleMouseDown = (e: any) => {
       const rect = canvasElement.getBoundingClientRect();
       const point = getPointFromEvent(e, rect);
       
@@ -42,6 +42,12 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
       if (activeTool === ToolType.HAND) {
         dispatch(startPanning(point));
         document.body.style.cursor = 'grabbing';
+      } else if (activeTool === ToolType.ERASER) {
+        dispatch(startDrawing({
+          ...point,
+          isEraser: true
+        }));
+        isDrawingRef.current = true;
       } else {
         const adjustedPoint = {
           ...point,
@@ -52,14 +58,21 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
       }
     };
     
-    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+    const handleMouseMove = (e: any) => {
       const rect = canvasElement.getBoundingClientRect();
       const point = getPointFromEvent(e, rect);
       
       if (activeTool === ToolType.HAND) {
         dispatch(continuePanning(point));
       } else if (isDrawingRef.current) {
-        dispatch(continueDrawing(point));
+        if (activeTool === ToolType.ERASER) {
+          dispatch(startDrawing({
+            ...point,
+            isEraser: true
+          }));
+        } else {
+          dispatch(continueDrawing(point));
+        }
       }
     };
     

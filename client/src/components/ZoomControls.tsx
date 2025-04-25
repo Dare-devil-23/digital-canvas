@@ -28,12 +28,12 @@ export default function ZoomControls() {
       transition={{ duration: 0.3 }}
     >
       {/* Zoom Level */}
-      <div className="bg-white dark:bg-uibg rounded-lg shadow-md flex items-center px-3 py-2 text-sm">
+      <div className="bg-background dark:bg-uibg rounded-lg shadow-md flex items-center px-3 py-2 text-sm">
         <span>{zoomLevel}%</span>
       </div>
       
       {/* Zoom Controls */}
-      <div className="bg-white dark:bg-uibg rounded-lg shadow-md flex">
+      <div className="bg-background dark:bg-uibg rounded-lg shadow-md flex">
         {/* Zoom Out */}
         <motion.button 
           className="toolbar-button rounded-l-lg p-2 w-10 h-10 flex items-center justify-center relative border-r border-uiborder"

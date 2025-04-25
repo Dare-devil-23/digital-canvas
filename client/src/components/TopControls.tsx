@@ -1,18 +1,35 @@
 import { motion } from 'framer-motion';
-import { useDispatch } from 'react-redux';
-import { undo, redo } from '../store/canvasSlice';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Undo, Redo, Share } from 'lucide-react';
+import { Share, Sun, Moon } from 'lucide-react';
 
 export default function TopControls() {
-  const dispatch = useDispatch();
+  const [isDarkMode, setIsDarkMode] = useState(false);
   
-  const handleUndo = () => {
-    dispatch(undo());
-  };
+  useEffect(() => {
+    // Check if user prefers dark mode
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
   
-  const handleRedo = () => {
-    dispatch(redo());
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setIsDarkMode(true);
+    }
   };
   
   const handleShare = () => {
@@ -27,28 +44,20 @@ export default function TopControls() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Undo/Redo */}
-      <div className="bg-white dark:bg-uibg rounded-lg shadow-md flex">
-        <motion.button 
-          className="toolbar-button rounded-l-lg p-2 w-10 h-10 flex items-center justify-center relative border-r border-uiborder"
-          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleUndo}
-          aria-label="Undo"
-        >
-          <Undo className="w-5 h-5" />
-        </motion.button>
-        
-        <motion.button 
-          className="toolbar-button rounded-r-lg p-2 w-10 h-10 flex items-center justify-center relative"
-          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleRedo}
-          aria-label="Redo"
-        >
-          <Redo className="w-5 h-5" />
-        </motion.button>
-      </div>
+      {/* Theme Toggle */}
+      <motion.button
+        className="bg-background dark:bg-uibg rounded-lg p-2 w-10 h-10 flex items-center justify-center shadow-md"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={toggleTheme}
+        aria-label="Toggle Theme"
+      >
+        {isDarkMode ? (
+          <Sun className="w-5 h-5" />
+        ) : (
+          <Moon className="w-5 h-5" />
+        )}
+      </motion.button>
       
       {/* Share Button */}
       <Button 

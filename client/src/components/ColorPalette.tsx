@@ -5,8 +5,9 @@ import { setSelectedColor, setStrokeWidth } from '../store/canvasSlice';
 import { ToolType } from '../types/canvas';
 
 const COLORS = [
-  '#0066FF', // Primary blue
-  '#FF6B00', // Orange
+  '#FF6B00', // Primary Orange,
+  '#FFD700', // Gold
+  '#0066FF', // blue
   '#22C55E', // Green
   '#F43F5E', // Red
   '#000000', // Black
@@ -28,7 +29,7 @@ export default function ColorPalette() {
   
   return (
     <motion.div 
-      className="absolute left-20 top-1/2 transform -translate-y-1/2 bg-white dark:bg-uibg rounded-xl shadow-md flex flex-col items-center py-3 px-2 z-10"
+      className="absolute left-20 top-1/2 transform -translate-y-1/2 bg-background dark:bg-uibg rounded-xl shadow-md flex flex-col items-center py-3 px-2 z-10"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
@@ -63,17 +64,17 @@ export default function ColorPalette() {
       {STROKE_WIDTHS.map((width) => (
         <motion.button
           key={width}
-          className="w-full h-8 flex items-center justify-center my-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
+          className={`w-full h-8 flex items-center justify-center my-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 
+            ${activeTool === ToolType.MARKER && strokeWidth === width * 2 ? 'bg-primary/10 text-primary' : activeTool === ToolType.PEN && strokeWidth === width ? 'bg-primary/10 text-primary' : ''}`}
           whileTap={{ scale: 0.95 }}
-          onClick={() => dispatch(setStrokeWidth(width))}
+          onClick={() => dispatch(setStrokeWidth(activeTool === ToolType.MARKER ? width * 2 : width))}
         >
           <motion.div 
             className="bg-current rounded-full"
             style={{ 
               height: `${width * 2}px`, 
               width: `${width}px`, 
-              opacity: strokeWidth === width ? 1 : 0.6 
+              // opacity: strokeWidth === width ? 1 : 0.6,
             }}
             animate={{ 
               scale: strokeWidth === width ? 1.1 : 1,

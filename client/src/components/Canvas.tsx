@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { RootState } from '../store/store';
 import { addImage, selectElement, setActiveTool } from '../store/canvasSlice';
-import { ToolType, Point } from '../types/canvas';
+import { ToolType } from '../types/canvas';
 import { useDrawing } from '../hooks/useDrawing';
 import useImage from 'use-image';
 
@@ -19,11 +19,11 @@ export default function Canvas() {
   const { 
     activeTool, 
     selectedColor, 
-    strokeWidth, 
     zoomLevel,
     elements,
     selectedElement,
-    pan
+    pan,
+    gridType
   } = useSelector((state: RootState) => state.canvas);
   
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -47,18 +47,25 @@ export default function Canvas() {
       'cursor-grab',
       'cursor-grabbing',
       'cursor-text',
-      'cursor-eraser'
+      'cursor-eraser',
+      'cursor-pen',
+      'cursor-marker',
+      'cursor-default'
     );
     
     switch (activeTool) {
       case ToolType.SELECT:
-        canvas.style.cursor = 'default';
+        canvas.classList.add('cursor-default');
         break;
       case ToolType.HAND:
         canvas.classList.add('cursor-grab');
         break;
       case ToolType.PEN:
+        canvas.classList.add('cursor-pen');
+        break;
       case ToolType.MARKER:
+        canvas.classList.add('cursor-marker');
+        break;
       case ToolType.SHAPES:
         canvas.classList.add('cursor-crosshair');
         break;
@@ -142,7 +149,7 @@ export default function Canvas() {
   return (
     <div 
       ref={canvasRef} 
-      className="absolute inset-0 w-full h-full canvas-grid bg-canvas dark:bg-gray-900"
+      className={`absolute inset-0 w-full h-full canvas-grid-${gridType} bg-canvas dark:bg-zinc-800`}
     >
       <Stage
         ref={stageRef}

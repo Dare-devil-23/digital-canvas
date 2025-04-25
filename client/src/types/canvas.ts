@@ -9,6 +9,14 @@ export enum ToolType {
   IMAGE = 'image'
 }
 
+export enum GridType {
+  STANDARD = 'standard',
+  QUAD = 'quad',
+  DOTS = 'dots',
+  LINED = 'lined',
+  NONE = 'none',
+}
+
 export type ShapeType = 'rectangle' | 'circle' | 'arrow';
 
 export interface Point {
