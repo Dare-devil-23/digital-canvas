@@ -92,14 +92,21 @@ export const canvasSlice = createSlice({
       state.lastPoint = action.payload;
 
       if (action.payload.isEraser) {
-        // Remove elements at the clicked point
         const { x, y } = action.payload;
         state.elements = state.elements.filter((element) => {
           if ("points" in element) {
             return !element.points.some(
               (point) =>
-                Math.abs(point.x - x) < 10 && Math.abs(point.y - y) < 10,
+                Math.abs(point.x - x) < 20 && Math.abs(point.y - y) < 20,
             );
+          }
+          if ("x" in element && "width" in element && "height" in element) {
+            const inBounds = 
+              x >= element.x && 
+              x <= element.x + element.width && 
+              y >= element.y && 
+              y <= element.y + element.height;
+            return !inBounds;
           }
           return true;
         });

@@ -43,7 +43,11 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
         dispatch(startPanning(point));
         document.body.style.cursor = 'grabbing';
       } else {
-        dispatch(startDrawing(point));
+        const adjustedPoint = {
+          ...point,
+          strokeWidth: activeTool === ToolType.MARKER ? 8 : undefined
+        };
+        dispatch(startDrawing(adjustedPoint));
         isDrawingRef.current = true;
       }
     };
