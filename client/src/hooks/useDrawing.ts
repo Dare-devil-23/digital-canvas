@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ToolType, Point } from '../types/canvas';
 import { 
   startDrawing, 
@@ -8,9 +8,11 @@ import {
   addText,
   startPanning,
   continuePanning,
-  stopPanning
+  stopPanning,
+  startEditingText
 } from '../store/canvasSlice';
 import { getPointFromEvent } from '../lib/utils';
+import { RootState } from '../store/store';
 
 interface UseDrawingProps {
   activeTool: ToolType;
@@ -21,6 +23,7 @@ interface UseDrawingProps {
 export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingProps) {
   const dispatch = useDispatch();
   const isDrawingRef = useRef(false);
+  const elements = useSelector((state: RootState) => state.canvas.elements);
   
   useEffect(() => {
     const canvasElement = canvasRef.current;
@@ -31,7 +34,7 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
       const point = getPointFromEvent(e, rect);
       
       if (activeTool === ToolType.TEXT) {
-        handleTextTool(point);
+        handleTextTool(point, e);
         return;
       }
 
@@ -86,9 +89,29 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
       }
     };
     
-    const handleTextTool = (point: Point) => {
-      const placeholderText = "Text";
-      dispatch(addText({ point, text: placeholderText }));
+    const handleTextTool = (point: Point, event: any) => {
+      // Check if we clicked on an existing text element
+      const clickedElement = elements.find(element => {
+        if ('text' in element) {
+          // Check if the point is within this text element's bounds
+          return (
+            point.x >= element.x && 
+            point.x <= element.x + element.width && 
+            point.y >= element.y && 
+            point.y <= element.y + element.height
+          );
+        }
+        return false;
+      });
+      
+      if (clickedElement) {
+        // If we clicked on an existing text element, start editing it immediately
+        dispatch(startEditingText(clickedElement.id));
+      } else {
+        // Otherwise create a new text element
+        const placeholderText = "Text";
+        dispatch(addText({ point, text: placeholderText }));
+      }
     };
     
     // Mouse events
@@ -123,5 +146,5 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
       canvasElement.removeEventListener('touchstart', preventDefaultTouch);
       canvasElement.removeEventListener('touchmove', preventDefaultTouch);
     };
-  }, [canvasRef, dispatch, activeTool, selectedColor]);
+  }, [canvasRef, dispatch, activeTool, selectedColor, elements]);
 }

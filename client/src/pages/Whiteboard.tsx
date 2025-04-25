@@ -8,6 +8,7 @@ import TopControls from '@/components/TopControls';
 import ZoomControls from '@/components/ZoomControls';
 import GridFilter from '@/components/GridFilter';
 import MobileToolbarToggle from '@/components/MobileToolbarToggle';
+import QuestionPanel from '@/components/QuestionPanel';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 
 export default function Whiteboard() {
@@ -57,6 +58,7 @@ export default function Whiteboard() {
       <GridFilter />
       <TopControls />
       <ZoomControls />
+      <QuestionPanel />
       
       <MobileToolbarToggle 
         toolbarRef={toolbarRef}

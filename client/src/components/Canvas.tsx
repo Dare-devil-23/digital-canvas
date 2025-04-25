@@ -1,9 +1,9 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Stage, Layer, Line, Rect, Circle, Arrow, Text, Image, Transformer } from 'react-konva';
 import { useSelector, useDispatch } from 'react-redux';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { RootState } from '../store/store';
-import { addImage, selectElement, setActiveTool } from '../store/canvasSlice';
+import { addImage, selectElement, setActiveTool, updateTextElement, stopEditingText, startEditingText } from '../store/canvasSlice';
 import { ToolType } from '../types/canvas';
 import { useDrawing } from '../hooks/useDrawing';
 import useImage from 'use-image';
@@ -23,12 +23,17 @@ export default function Canvas() {
     elements,
     selectedElement,
     pan,
-    gridType
+    gridType,
+    editingText
   } = useSelector((state: RootState) => state.canvas);
+  
+  const [textInputValue, setTextInputValue] = useState('');
+  const [textInputPosition, setTextInputPosition] = useState({ x: 0, y: 0 });
   
   const canvasRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<any>(null);
   const transformerRef = useRef<any>(null);
+  const textInputRef = useRef<HTMLTextAreaElement>(null);
   
   // Set up drawing handlers
   useDrawing({
@@ -80,6 +85,54 @@ export default function Canvas() {
     }
   }, [activeTool]);
   
+  // Handle text editing mode
+  useEffect(() => {
+    if (editingText) {
+      const textElement = elements.find(el => el.id === editingText && 'text' in el);
+      
+      if (textElement && 'text' in textElement) {
+        // Position the text input at the text element's position
+        setTextInputPosition({
+          x: textElement.x * (zoomLevel / 100) + pan.x,
+          y: textElement.y * (zoomLevel / 100) + pan.y
+        });
+        
+        // Set the initial value of the text input
+        setTextInputValue(textElement.text);
+        
+        // Focus the text input
+        setTimeout(() => {
+          if (textInputRef.current) {
+            textInputRef.current.focus();
+            textInputRef.current.select();
+          }
+        }, 10);
+      }
+    }
+  }, [editingText, elements, zoomLevel, pan]);
+  
+  const handleTextInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTextInputValue(e.target.value);
+  };
+  
+  const handleTextInputBlur = () => {
+    if (editingText) {
+      dispatch(updateTextElement({
+        id: editingText,
+        text: textInputValue || 'Text'
+      }));
+      dispatch(stopEditingText());
+      dispatch(setActiveTool(ToolType.SELECT));
+    }
+  };
+  
+  const handleTextInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleTextInputBlur();
+    }
+  };
+  
   // Listen for image uploads
   useEffect(() => {
     const handleImageUpload = (e: CustomEvent) => {
@@ -121,16 +174,21 @@ export default function Canvas() {
   
   // Update transformer node when selection changes
   useEffect(() => {
-    if (selectedElement && transformerRef.current && stageRef.current) {
+    if (transformerRef.current && stageRef.current) {
       const stage = stageRef.current;
       const transformer = transformerRef.current;
       
-      // Find the node by name (which is set to the element ID)
-      const node = stage.findOne(`.${selectedElement}`);
-      
-      if (node) {
-        transformer.nodes([node]);
-        transformer.getLayer().batchDraw();
+      if (selectedElement) {
+        // Find the node by id - use id attribute instead of class name
+        const node = stage.findOne(`#${selectedElement}`);
+        
+        if (node) {
+          transformer.nodes([node]);
+          transformer.getLayer().batchDraw();
+        } else {
+          transformer.nodes([]);
+          transformer.getLayer().batchDraw();
+        }
       } else {
         transformer.nodes([]);
         transformer.getLayer().batchDraw();
@@ -139,6 +197,9 @@ export default function Canvas() {
   }, [selectedElement, elements]);
   
   const handleStageClick = (e: KonvaEventObject<MouseEvent>) => {
+    // Don't deselect if we're editing text
+    if (editingText) return;
+    
     const clickedOnEmpty = e.target === e.target.getStage();
     if (clickedOnEmpty) {
       dispatch(selectElement(null));
@@ -175,7 +236,7 @@ export default function Canvas() {
                   lineCap="round"
                   lineJoin="round"
                   opacity={element.opacity || 1}
-                  name={element.id}
+                  id={element.id}
                   onClick={() => dispatch(selectElement(element.id))}
                 />
               );
@@ -192,7 +253,7 @@ export default function Canvas() {
                     stroke={element.color}
                     strokeWidth={element.strokeWidth}
                     opacity={element.opacity || 1}
-                    name={element.id}
+                    id={element.id}
                     onClick={() => dispatch(selectElement(element.id))}
                     draggable={activeTool === ToolType.SELECT}
                   />
@@ -207,7 +268,7 @@ export default function Canvas() {
                     stroke={element.color}
                     strokeWidth={element.strokeWidth}
                     opacity={element.opacity || 1}
-                    name={element.id}
+                    id={element.id}
                     onClick={() => dispatch(selectElement(element.id))}
                     draggable={activeTool === ToolType.SELECT}
                   />
@@ -225,13 +286,18 @@ export default function Canvas() {
                     stroke={element.color}
                     strokeWidth={element.strokeWidth}
                     opacity={element.opacity || 1}
-                    name={element.id}
+                    id={element.id}
                     onClick={() => dispatch(selectElement(element.id))}
                     draggable={activeTool === ToolType.SELECT}
                   />
                 );
               }
             } else if ('text' in element) {
+              // Don't render the text element if it's being edited
+              if (editingText === element.id) {
+                return null;
+              }
+              
               // Text
               return (
                 <Text
@@ -242,15 +308,14 @@ export default function Canvas() {
                   fill={element.color}
                   fontSize={element.fontSize}
                   width={element.width}
-                  name={element.id}
+                  id={element.id}
                   onClick={() => {
                     dispatch(selectElement(element.id));
-                    dispatch(setActiveTool(ToolType.TEXT));
                   }}
                   draggable={activeTool === ToolType.SELECT}
                   onDblClick={() => {
-                    // In a real app, this would open a text editor
-                    console.log('Edit text');
+                    dispatch(setActiveTool(ToolType.TEXT));
+                    dispatch(startEditingText(element.id));
                   }}
                 />
               );
@@ -264,7 +329,7 @@ export default function Canvas() {
                   width={element.width}
                   height={element.height}
                   src={element.src}
-                  name={element.id}
+                  id={element.id}
                   onClick={() => dispatch(selectElement(element.id))}
                   draggable={activeTool === ToolType.SELECT}
                 />
@@ -286,6 +351,39 @@ export default function Canvas() {
           />
         </Layer>
       </Stage>
+      
+      {/* Text input for editing text */}
+      {editingText && (
+        <textarea
+          ref={textInputRef}
+          value={textInputValue}
+          onChange={handleTextInputChange}
+          onBlur={handleTextInputBlur}
+          onKeyDown={handleTextInputKeyDown}
+          style={{
+            position: 'absolute',
+            left: `${textInputPosition.x}px`,
+            top: `${textInputPosition.y}px`,
+            background: 'transparent',
+            border: '1px dashed #aaa',
+            outline: 'none',
+            fontSize: `${(() => {
+              const textElement = elements.find(el => el.id === editingText && 'text' in el);
+              return textElement && 'fontSize' in textElement ? textElement.fontSize : 14;
+            })()}px`,
+            color: (() => {
+              const textElement = elements.find(el => el.id === editingText && 'text' in el);
+              return textElement && 'color' in textElement ? textElement.color : selectedColor;
+            })(),
+            minWidth: '200px',
+            minHeight: '30px',
+            padding: '4px',
+            resize: 'both',
+            overflow: 'hidden'
+          }}
+          autoFocus
+        />
+      )}
     </div>
   );
 }

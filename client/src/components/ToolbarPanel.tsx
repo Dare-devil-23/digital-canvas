@@ -13,7 +13,7 @@ import { ToolType, ShapeType } from "../types/canvas";
 import ToolButton from "./ToolButton";
 import {
   MousePointer,
-  // Hand,
+  Hand,
   Pen,
   Highlighter,
   Eraser,
@@ -49,7 +49,7 @@ export default function ToolbarPanel() {
   const handleUndo = () => {
     dispatch(undo());
   };
-  
+
   const handleRedo = () => {
     dispatch(redo());
   };
@@ -85,11 +85,20 @@ export default function ToolbarPanel() {
 
   return (
     <motion.div
-      className="absolute left-4 bottom-20 md:bottom-4 transform -translate-y-1/2 bg-background dark:bg-uibg rounded-xl shadow-md flex flex-col h-fit items-center pt-3 px-2 z-10"
+      className="absolute left-4 bottom-1/4 md:bottom-4 transform -translate-y-1/2 bg-background dark:bg-uibg rounded-xl shadow-md flex flex-col h-fit items-center pt-3 px-2 z-10"
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
+
+      <ToolButton
+        name="Hand"
+        icon={Hand}
+        active={activeTool === ToolType.HAND}
+        onClick={() => handleToolClick(ToolType.HAND)}
+        shortcut="H"
+      />
+
       <ToolButton
         name="Select"
         icon={MousePointer}
@@ -97,14 +106,6 @@ export default function ToolbarPanel() {
         onClick={() => handleToolClick(ToolType.SELECT)}
         shortcut="V"
       />
-
-      {/* <ToolButton
-        name="Hand"
-        icon={Hand}
-        active={activeTool === ToolType.HAND}
-        onClick={() => handleToolClick(ToolType.HAND)}
-        shortcut="H"
-      /> */}
 
       <ToolButton
         name="Pen"
@@ -194,10 +195,10 @@ export default function ToolbarPanel() {
         onClick={handleImageUpload}
         shortcut="I"
       />
-      
+
       {/* Separator line */}
       <div className="w-full h-px bg-black/20 dark:bg-uiborder my-2"></div>
-      
+
       {/* Undo/Redo buttons */}
       <ToolButton
         name="Undo"
@@ -205,7 +206,7 @@ export default function ToolbarPanel() {
         onClick={handleUndo}
         shortcut="⌘Z"
       />
-      
+
       <ToolButton
         name="Redo"
         icon={Redo}

@@ -17,19 +17,20 @@ const STROKE_WIDTHS = [2, 4, 6];
 
 export default function ColorPalette() {
   const dispatch = useDispatch();
-  const { activeTool, selectedColor, strokeWidth } = useSelector((state: RootState) => state.canvas);
+  const { activeTool, selectedColor, strokeWidth, shapesMenuOpen } = useSelector((state: RootState) => state.canvas);
   
   const isDrawingTool = 
     activeTool === ToolType.PEN || 
     activeTool === ToolType.MARKER || 
     activeTool === ToolType.TEXT ||
-    activeTool === ToolType.SHAPES;
+    activeTool === ToolType.SHAPES ||
+    activeTool === ToolType.ERASER;
   
-  if (!isDrawingTool) return null;
+  if (!isDrawingTool || shapesMenuOpen) return null;
   
   return (
     <motion.div 
-      className="absolute left-20 top-1/2 transform -translate-y-1/2 bg-background dark:bg-uibg rounded-xl shadow-md flex flex-col items-center py-3 px-2 z-10"
+      className="absolute left-20 bottom-1/4 md:bottom-4 transform -translate-y-1/2 bg-background dark:bg-uibg rounded-xl shadow-md flex flex-col items-center py-3 px-2 z-10"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
@@ -42,11 +43,14 @@ export default function ColorPalette() {
           style={{ 
             backgroundColor: color,
             outline: `2px solid ${selectedColor === color ? 'rgba(0,0,0,0.1)' : 'transparent'}`,
-            outlineOffset: '2px'
+            outlineOffset: '2px',
+            pointerEvents: activeTool === ToolType.ERASER ? 'none' : 'auto',
+            opacity: activeTool === ToolType.ERASER ? 0.2 : 1,
           }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={() => dispatch(setSelectedColor(color))}
+          
         >
           {selectedColor === color && (
             <motion.div 
