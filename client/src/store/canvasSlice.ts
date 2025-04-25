@@ -142,17 +142,20 @@ export const canvasSlice = createSlice({
       state.lastPoint = null;
     },
     addText: (state, action: PayloadAction<{ point: Point, text: string }>) => {
+      const id = nanoid();
       const newText: TextElement = {
-        id: nanoid(),
+        id,
         x: action.payload.point.x,
         y: action.payload.point.y,
         text: action.payload.text,
         color: state.selectedColor,
         fontSize: 14 + state.strokeWidth,
-        width: 100,
+        width: 200,
         height: 30
       };
       state.elements.push(newText);
+      state.selectedElement = id;
+      state.editingText = id;
       
       // Save to history
       state.history = state.history.slice(0, state.historyIndex + 1);
@@ -161,6 +164,41 @@ export const canvasSlice = createSlice({
         selectedElement: state.selectedElement
       });
       state.historyIndex = state.history.length - 1;
+    },
+    
+    startEditingText: (state, action: PayloadAction<string>) => {
+      state.editingText = action.payload;
+      state.selectedElement = action.payload;
+    },
+    
+    updateTextElement: (state, action: PayloadAction<{ id: string, text: string, width?: number, height?: number }>) => {
+      const textElement = state.elements.find(el => el.id === action.payload.id && 'text' in el) as TextElement | undefined;
+      
+      if (textElement) {
+        textElement.text = action.payload.text;
+        
+        if (action.payload.width) {
+          textElement.width = action.payload.width;
+        }
+        
+        if (action.payload.height) {
+          textElement.height = action.payload.height;
+        }
+        
+        // Save to history
+        state.history = state.history.slice(0, state.historyIndex + 1);
+        state.history.push({
+          elements: JSON.parse(JSON.stringify(state.elements)),
+          selectedElement: state.selectedElement
+        });
+        state.historyIndex = state.history.length - 1;
+      }
+      
+      state.editingText = null;
+    },
+    
+    stopEditingText: (state) => {
+      state.editingText = null;
     },
     addImage: (state, action: PayloadAction<{ point: Point, src: string, width: number, height: number }>) => {
       const newImage: ImageElement = {
