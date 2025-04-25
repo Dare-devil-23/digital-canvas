@@ -24,7 +24,7 @@ export default function MobileToolbarToggle({ toolbarRef, colorPaletteRef }: Mob
   
   return (
     <motion.button 
-      className="lg:hidden fixed bottom-6 left-6 bg-primary text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-20"
+      className="lg:hidden fixed bottom-20 left-6 bg-primary text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-20"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={toggleToolbar}

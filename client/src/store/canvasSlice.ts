@@ -81,11 +81,22 @@ export const canvasSlice = createSlice({
       state.activeTool = ToolType.SHAPES;
       state.shapesMenuOpen = false;
     },
-    startDrawing: (state, action: PayloadAction<Point>) => {
+    startDrawing: (state, action: PayloadAction<Point & { isEraser?: boolean }>) => {
       state.isDrawing = true;
       state.lastPoint = action.payload;
       
-      if (state.activeTool === ToolType.PEN || state.activeTool === ToolType.MARKER) {
+      if (action.payload.isEraser) {
+        // Remove elements at the clicked point
+        const { x, y } = action.payload;
+        state.elements = state.elements.filter(element => {
+          if ('points' in element) {
+            return !element.points.some(point => 
+              Math.abs(point.x - x) < 10 && Math.abs(point.y - y) < 10
+            );
+          }
+          return true;
+        });
+      } else if (state.activeTool === ToolType.PEN || state.activeTool === ToolType.MARKER) {
         const newLine: Line = {
           id: nanoid(),
           tool: state.activeTool,

@@ -132,9 +132,10 @@ export default function Canvas() {
   }, [selectedElement, elements]);
   
   const handleStageClick = (e: KonvaEventObject<MouseEvent>) => {
-    // Deselect when clicking on empty space
-    if (e.target === e.currentTarget) {
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
       dispatch(selectElement(null));
+      transformerRef.current?.nodes([]);
     }
   };
   
