@@ -88,6 +88,16 @@ export const canvasSlice = createSlice({
           opacity: state.activeTool === ToolType.MARKER ? 0.5 : 1
         };
         state.elements.push(newLine);
+      } else if (state.activeTool === ToolType.ERASER) {
+        const newLine: Line = {
+          id: nanoid(),
+          tool: state.activeTool,
+          color: '#ffffff', // White color for eraser
+          strokeWidth: state.strokeWidth + 8, // Make eraser slightly larger
+          points: [action.payload],
+          opacity: 1
+        };
+        state.elements.push(newLine);
       } else if (state.activeTool === ToolType.SHAPES && state.selectedShape) {
         const newShape: Shape = {
           id: nanoid(),
@@ -105,7 +115,7 @@ export const canvasSlice = createSlice({
     continueDrawing: (state, action: PayloadAction<Point>) => {
       if (!state.isDrawing) return;
       
-      if ((state.activeTool === ToolType.PEN || state.activeTool === ToolType.MARKER) && state.lastPoint) {
+      if ((state.activeTool === ToolType.PEN || state.activeTool === ToolType.MARKER || state.activeTool === ToolType.ERASER) && state.lastPoint) {
         const lastElement = state.elements[state.elements.length - 1] as Line;
         if (lastElement && 'points' in lastElement) {
           lastElement.points.push(action.payload);

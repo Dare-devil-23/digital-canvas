@@ -17,9 +17,11 @@ import {
   Square,
   Circle,
   ArrowRight,
+  Triangle,
   Type,
   Image as ImageIcon,
   MoreHorizontal,
+  Plus
 } from 'lucide-react';
 
 export default function ToolbarPanel() {
@@ -69,115 +71,136 @@ export default function ToolbarPanel() {
   
   return (
     <motion.div 
-      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-uibg rounded-xl shadow-md flex flex-col items-center py-3 px-2 z-10"
+      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-uibg/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 flex flex-col items-center py-4 px-2.5 z-10"
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
+      style={{
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+      }}
     >
-      <ToolButton
-        name="Select"
-        icon={MousePointer}
-        active={activeTool === ToolType.SELECT}
-        onClick={() => handleToolClick(ToolType.SELECT)}
-        shortcut="V"
-      />
-      
-      <ToolButton
-        name="Hand"
-        icon={Hand}
-        active={activeTool === ToolType.HAND}
-        onClick={() => handleToolClick(ToolType.HAND)}
-        shortcut="H"
-      />
-      
-      <ToolButton
-        name="Pen"
-        icon={Pen}
-        active={activeTool === ToolType.PEN}
-        onClick={() => handleToolClick(ToolType.PEN)}
-        shortcut="P"
-      />
-      
-      <ToolButton
-        name="Marker"
-        icon={Highlighter}
-        active={activeTool === ToolType.MARKER}
-        onClick={() => handleToolClick(ToolType.MARKER)}
-        shortcut="M"
-      />
-      
-      <ToolButton
-        name="Eraser"
-        icon={Eraser}
-        active={activeTool === ToolType.ERASER}
-        onClick={() => handleToolClick(ToolType.ERASER)}
-        shortcut="E"
-      />
-      
-      <div className="relative">
+      {/* Drawing Tools Section */}
+      <div className="mb-3 flex flex-col items-center">
         <ToolButton
-          name="Shapes"
-          icon={MoreHorizontal}
-          active={activeTool === ToolType.SHAPES}
-          onClick={handleShapesClick}
-          shortcut="S"
+          name="Select"
+          icon={MousePointer}
+          active={activeTool === ToolType.SELECT}
+          onClick={() => handleToolClick(ToolType.SELECT)}
+          shortcut="V"
         />
         
-        <AnimatePresence>
-          {shapesMenuOpen && (
-            <motion.div 
-              className="absolute left-full ml-3 bg-white dark:bg-uibg rounded-lg shadow-md flex p-2"
-              initial={{ opacity: 0, scale: 0.9, x: -10 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.9, x: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.button 
-                className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleShapeSelect('rectangle')}
-              >
-                <Square className="w-5 h-5" />
-              </motion.button>
-              
-              <motion.button 
-                className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleShapeSelect('circle')}
-              >
-                <Circle className="w-5 h-5" />
-              </motion.button>
-              
-              <motion.button 
-                className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleShapeSelect('arrow')}
-              >
-                <ArrowRight className="w-5 h-5" />
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <ToolButton
+          name="Hand"
+          icon={Hand}
+          active={activeTool === ToolType.HAND}
+          onClick={() => handleToolClick(ToolType.HAND)}
+          shortcut="H"
+        />
       </div>
       
-      <ToolButton
-        name="Text"
-        icon={Type}
-        active={activeTool === ToolType.TEXT}
-        onClick={() => handleToolClick(ToolType.TEXT)}
-        shortcut="T"
-      />
+      {/* Separator */}
+      <div className="w-8 h-px bg-gray-200 dark:bg-gray-700 my-1 mb-3"></div>
       
-      <ToolButton
-        name="Image"
-        icon={ImageIcon}
-        active={activeTool === ToolType.IMAGE}
-        onClick={handleImageUpload}
-        shortcut="I"
-      />
+      {/* Drawing Tools Section */}
+      <div className="mb-3 flex flex-col items-center">
+        <ToolButton
+          name="Pen"
+          icon={Pen}
+          active={activeTool === ToolType.PEN}
+          onClick={() => handleToolClick(ToolType.PEN)}
+          shortcut="P"
+        />
+        
+        <ToolButton
+          name="Marker"
+          icon={Highlighter}
+          active={activeTool === ToolType.MARKER}
+          onClick={() => handleToolClick(ToolType.MARKER)}
+          shortcut="M"
+        />
+        
+        <ToolButton
+          name="Eraser"
+          icon={Eraser}
+          active={activeTool === ToolType.ERASER}
+          onClick={() => handleToolClick(ToolType.ERASER)}
+          shortcut="E"
+        />
+      </div>
+      
+      {/* Separator */}
+      <div className="w-8 h-px bg-gray-200 dark:bg-gray-700 my-1 mb-3"></div>
+      
+      {/* Content Tools Section */}
+      <div className="flex flex-col items-center">
+        <div className="relative">
+          <ToolButton
+            name="Shapes"
+            icon={MoreHorizontal}
+            active={activeTool === ToolType.SHAPES}
+            onClick={handleShapesClick}
+            shortcut="S"
+          />
+          
+          <AnimatePresence>
+            {shapesMenuOpen && (
+              <motion.div 
+                className="absolute left-full ml-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 flex p-2"
+                initial={{ opacity: 0, scale: 0.9, x: -10 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.9, x: -10 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                <motion.button 
+                  className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleShapeSelect('rectangle')}
+                >
+                  <Square className="w-5 h-5" />
+                </motion.button>
+                
+                <motion.button 
+                  className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleShapeSelect('circle')}
+                >
+                  <Circle className="w-5 h-5" />
+                </motion.button>
+                
+                <motion.button 
+                  className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleShapeSelect('arrow')}
+                >
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        
+        <ToolButton
+          name="Text"
+          icon={Type}
+          active={activeTool === ToolType.TEXT}
+          onClick={() => handleToolClick(ToolType.TEXT)}
+          shortcut="T"
+        />
+        
+        <ToolButton
+          name="Image"
+          icon={ImageIcon}
+          active={activeTool === ToolType.IMAGE}
+          onClick={handleImageUpload}
+          shortcut="I"
+        />
+      </div>
     </motion.div>
   );
 }
