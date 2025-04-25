@@ -27,6 +27,7 @@ interface CanvasState {
   selectedElement: string | null;
   isPanning: boolean;
   pan: Point;
+  editingText: string | null;
 }
 
 const initialState: CanvasState = {
@@ -43,7 +44,8 @@ const initialState: CanvasState = {
   historyIndex: -1,
   selectedElement: null,
   isPanning: false,
-  pan: { x: 0, y: 0 }
+  pan: { x: 0, y: 0 },
+  editingText: null
 };
 
 export const canvasSlice = createSlice({
@@ -51,6 +53,11 @@ export const canvasSlice = createSlice({
   initialState,
   reducers: {
     setActiveTool: (state, action: PayloadAction<ToolType>) => {
+      // If switching away from eraser, stop erasing
+      if (state.activeTool === ToolType.ERASER && action.payload !== ToolType.ERASER) {
+        state.editingText = null;
+      }
+      
       state.activeTool = action.payload;
       // Close shapes menu if a different tool is selected
       if (action.payload !== ToolType.SHAPES) {
