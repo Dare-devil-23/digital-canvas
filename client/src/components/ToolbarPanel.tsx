@@ -71,135 +71,134 @@ export default function ToolbarPanel() {
   
   return (
     <motion.div 
-      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 dark:bg-uibg/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 flex flex-col items-center py-4 px-2.5 z-10"
-      initial={{ x: -20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
+      className="fixed top-3 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex items-center justify-center z-20"
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
       style={{
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        border: '1px solid rgba(0,0,0,0.08)'
       }}
     >
-      {/* Drawing Tools Section */}
-      <div className="mb-3 flex flex-col items-center">
-        <ToolButton
-          name="Select"
-          icon={MousePointer}
-          active={activeTool === ToolType.SELECT}
-          onClick={() => handleToolClick(ToolType.SELECT)}
-          shortcut="V"
-        />
-        
-        <ToolButton
-          name="Hand"
-          icon={Hand}
-          active={activeTool === ToolType.HAND}
-          onClick={() => handleToolClick(ToolType.HAND)}
-          shortcut="H"
-        />
+      {/* Left Tools Section */}
+      <div className="flex items-center border-r border-gray-200 dark:border-gray-800 px-1.5 py-1.5">
+        <div className="flex items-center">
+          <motion.button
+            className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.SELECT ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleToolClick(ToolType.SELECT)}
+          >
+            <MousePointer className="w-5 h-5" />
+          </motion.button>
+          
+          <motion.button
+            className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.HAND ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleToolClick(ToolType.HAND)}
+          >
+            <Hand className="w-5 h-5" />
+          </motion.button>
+        </div>
       </div>
       
-      {/* Separator */}
-      <div className="w-8 h-px bg-gray-200 dark:bg-gray-700 my-1 mb-3"></div>
-      
       {/* Drawing Tools Section */}
-      <div className="mb-3 flex flex-col items-center">
-        <ToolButton
-          name="Pen"
-          icon={Pen}
-          active={activeTool === ToolType.PEN}
+      <div className="flex items-center px-1.5 py-1.5 border-r border-gray-200 dark:border-gray-800">
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.PEN ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => handleToolClick(ToolType.PEN)}
-          shortcut="P"
-        />
+        >
+          <Pen className="w-5 h-5" />
+        </motion.button>
         
-        <ToolButton
-          name="Marker"
-          icon={Highlighter}
-          active={activeTool === ToolType.MARKER}
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.MARKER ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => handleToolClick(ToolType.MARKER)}
-          shortcut="M"
-        />
+        >
+          <Highlighter className="w-5 h-5" />
+        </motion.button>
         
-        <ToolButton
-          name="Eraser"
-          icon={Eraser}
-          active={activeTool === ToolType.ERASER}
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.ERASER ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => handleToolClick(ToolType.ERASER)}
-          shortcut="E"
-        />
+        >
+          <Eraser className="w-5 h-5" />
+        </motion.button>
       </div>
       
-      {/* Separator */}
-      <div className="w-8 h-px bg-gray-200 dark:bg-gray-700 my-1 mb-3"></div>
+      {/* Shapes Section */}
+      <div className="flex items-center border-r border-gray-200 dark:border-gray-800 px-1.5 py-1.5 relative">
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.SHAPES ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleShapesClick}
+        >
+          <Square className="w-5 h-5" />
+        </motion.button>
+        
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg text-gray-700 hover:bg-gray-100`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleShapeSelect('circle')}
+        >
+          <Circle className="w-5 h-5" />
+        </motion.button>
+        
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg text-gray-700 hover:bg-gray-100`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleShapeSelect('triangle')}
+        >
+          <Triangle className="w-5 h-5" />
+        </motion.button>
+        
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg text-gray-700 hover:bg-gray-100`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleShapeSelect('arrow')}
+        >
+          <ArrowRight className="w-5 h-5" />
+        </motion.button>
+      </div>
       
       {/* Content Tools Section */}
-      <div className="flex flex-col items-center">
-        <div className="relative">
-          <ToolButton
-            name="Shapes"
-            icon={MoreHorizontal}
-            active={activeTool === ToolType.SHAPES}
-            onClick={handleShapesClick}
-            shortcut="S"
-          />
-          
-          <AnimatePresence>
-            {shapesMenuOpen && (
-              <motion.div 
-                className="absolute left-full ml-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 flex p-2"
-                initial={{ opacity: 0, scale: 0.9, x: -10 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.9, x: -10 }}
-                transition={{ duration: 0.2 }}
-                style={{
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                }}
-              >
-                <motion.button 
-                  className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleShapeSelect('rectangle')}
-                >
-                  <Square className="w-5 h-5" />
-                </motion.button>
-                
-                <motion.button 
-                  className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleShapeSelect('circle')}
-                >
-                  <Circle className="w-5 h-5" />
-                </motion.button>
-                
-                <motion.button 
-                  className="toolbar-button rounded-lg p-2 m-1 w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleShapeSelect('arrow')}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-        
-        <ToolButton
-          name="Text"
-          icon={Type}
-          active={activeTool === ToolType.TEXT}
+      <div className="flex items-center px-1.5 py-1.5">
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.TEXT ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => handleToolClick(ToolType.TEXT)}
-          shortcut="T"
-        />
+        >
+          <Type className="w-5 h-5" />
+        </motion.button>
         
-        <ToolButton
-          name="Image"
-          icon={ImageIcon}
-          active={activeTool === ToolType.IMAGE}
+        <motion.button
+          className={`flex items-center justify-center w-9 h-9 rounded-lg ${activeTool === ToolType.IMAGE ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'}`}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleImageUpload}
-          shortcut="I"
-        />
+        >
+          <ImageIcon className="w-5 h-5" />
+        </motion.button>
+        
+        <motion.button
+          className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-700 hover:bg-gray-100"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Plus className="w-5 h-5" />
+        </motion.button>
       </div>
     </motion.div>
   );

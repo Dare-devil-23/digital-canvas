@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Stage, Layer, Line, Rect, Circle, Arrow, Text, Image, Transformer } from 'react-konva';
+import { Stage, Layer, Line, Rect, Circle, Arrow, Text, Image, Transformer, Shape } from 'react-konva';
 import { useSelector, useDispatch } from 'react-redux';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { RootState } from '../store/store';
