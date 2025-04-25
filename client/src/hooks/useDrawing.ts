@@ -42,10 +42,6 @@ export function useDrawing({ activeTool, canvasRef, selectedColor }: UseDrawingP
       if (activeTool === ToolType.HAND) {
         dispatch(startPanning(point));
         document.body.style.cursor = 'grabbing';
-      } else if (activeTool === ToolType.ERASER) {
-        dispatch(selectElement(null));
-        dispatch(startDrawing({ ...point, isEraser: true }));
-        isDrawingRef.current = true;
       } else {
         dispatch(startDrawing(point));
         isDrawingRef.current = true;
