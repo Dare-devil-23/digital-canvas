@@ -5,86 +5,82 @@ import { setSelectedColor, setStrokeWidth } from '../store/canvasSlice';
 import { ToolType } from '../types/canvas';
 
 const COLORS = [
-  '#6B66FF', // Purple
-  '#4C9AFF', // Blue
-  '#0BB580', // Green
+  '#0066FF', // Primary blue
   '#FF6B00', // Orange
-  '#FF5630', // Red
-  '#FFAA44', // Yellow
-  '#FFFFFF', // White
+  '#22C55E', // Green
+  '#F43F5E', // Red
   '#000000', // Black
 ];
 
-const STROKE_WIDTHS = [2, 4, 6, 8];
+const STROKE_WIDTHS = [2, 4, 6];
 
 export default function ColorPalette() {
   const dispatch = useDispatch();
   const { activeTool, selectedColor, strokeWidth } = useSelector((state: RootState) => state.canvas);
   
-  // Always show the color palette in the top toolbar
-  // We'll hide in CSS based on context if needed
+  const isDrawingTool = 
+    activeTool === ToolType.PEN || 
+    activeTool === ToolType.MARKER || 
+    activeTool === ToolType.TEXT ||
+    activeTool === ToolType.SHAPES;
+  
+  if (!isDrawingTool) return null;
   
   return (
     <motion.div 
-      className="fixed top-3 right-3 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex items-center px-2 py-1.5 z-20"
-      style={{
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        border: '1px solid rgba(0,0,0,0.08)'
-      }}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
+      className="absolute left-20 top-1/2 transform -translate-y-1/2 bg-white dark:bg-uibg rounded-xl shadow-md flex flex-col items-center py-3 px-2 z-10"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-center space-x-1 mr-1">
-        {STROKE_WIDTHS.map((width) => (
-          <motion.button
-            key={width}
-            className={`w-8 h-8 flex items-center justify-center rounded-lg ${strokeWidth === width ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
-            whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.05)' }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => dispatch(setStrokeWidth(width))}
-          >
-            <motion.div 
-              className="bg-gray-800 dark:bg-gray-300 rounded-full"
-              style={{ 
-                height: `${width}px`, 
-                width: `${Math.max(12, width * 3)}px`,
-                opacity: strokeWidth === width ? 1 : 0.6 
-              }}
-            />
-          </motion.button>
-        ))}
-      </div>
-
-      <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1" />
-      
-      <div className="flex items-center space-x-1">
-        {COLORS.map((color) => (
-          <motion.button
-            key={color}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center ${selectedColor === color ? 'ring-2 ring-gray-300 dark:ring-gray-600' : ''}`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => dispatch(setSelectedColor(color))}
-          >
-            <div
-              className="w-6 h-6 rounded-full"
-              style={{ 
-                backgroundColor: color,
-                border: color === '#FFFFFF' ? '1px solid #E0E0E0' : 'none'
-              }}
-            />
-          </motion.button>
-        ))}
-        
+      {COLORS.map((color) => (
         <motion.button
-          className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-50 dark:bg-gray-800"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          key={color}
+          className="w-6 h-6 rounded-full m-1 relative"
+          style={{ 
+            backgroundColor: color,
+            outline: `2px solid ${selectedColor === color ? 'rgba(0,0,0,0.1)' : 'transparent'}`,
+            outlineOffset: '2px'
+          }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => dispatch(setSelectedColor(color))}
         >
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-red-500 via-green-500 to-blue-500" />
+          {selectedColor === color && (
+            <motion.div 
+              className="absolute inset-0 rounded-full border-2 border-gray-800 dark:border-gray-200"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
         </motion.button>
-      </div>
+      ))}
+      
+      <div className="h-px w-full bg-gray-200 dark:bg-gray-700 my-2" />
+      
+      {STROKE_WIDTHS.map((width) => (
+        <motion.button
+          key={width}
+          className="w-full h-8 flex items-center justify-center my-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => dispatch(setStrokeWidth(width))}
+        >
+          <motion.div 
+            className="bg-current rounded-full"
+            style={{ 
+              height: `${width * 2}px`, 
+              width: `${width}px`, 
+              opacity: strokeWidth === width ? 1 : 0.6 
+            }}
+            animate={{ 
+              scale: strokeWidth === width ? 1.1 : 1,
+            }}
+          />
+        </motion.button>
+      ))}
     </motion.div>
   );
 }

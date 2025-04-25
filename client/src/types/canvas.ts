@@ -9,7 +9,7 @@ export enum ToolType {
   IMAGE = 'image'
 }
 
-export type ShapeType = 'rectangle' | 'circle' | 'arrow' | 'triangle';
+export type ShapeType = 'rectangle' | 'circle' | 'arrow';
 
 export interface Point {
   x: number;

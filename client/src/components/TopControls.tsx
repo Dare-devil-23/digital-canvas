@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
 import { undo, redo } from '../store/canvasSlice';
 import { Button } from '@/components/ui/button';
-import { Undo, Redo, Share, Users, Download } from 'lucide-react';
+import { Undo, Redo, Share } from 'lucide-react';
 
 export default function TopControls() {
   const dispatch = useDispatch();
@@ -22,71 +22,51 @@ export default function TopControls() {
   
   return (
     <motion.div 
-      className="fixed top-3 right-[calc(50%+300px)] flex items-center gap-3 z-20"
+      className="absolute top-4 right-4 flex items-center gap-3 z-10"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
       {/* Undo/Redo */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg flex border border-gray-100 dark:border-gray-800">
+      <div className="bg-white dark:bg-uibg rounded-lg shadow-md flex">
         <motion.button 
-          className="p-1.5 w-9 h-9 flex items-center justify-center relative border-r border-gray-200 dark:border-gray-800"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.05)' }}
+          className="toolbar-button rounded-l-lg p-2 w-10 h-10 flex items-center justify-center relative border-r border-uiborder"
+          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
           whileTap={{ scale: 0.95 }}
           onClick={handleUndo}
           aria-label="Undo"
         >
-          <Undo className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          <Undo className="w-5 h-5" />
         </motion.button>
         
         <motion.button 
-          className="p-1.5 w-9 h-9 flex items-center justify-center relative"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.05)' }}
+          className="toolbar-button rounded-r-lg p-2 w-10 h-10 flex items-center justify-center relative"
+          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
           whileTap={{ scale: 0.95 }}
           onClick={handleRedo}
           aria-label="Redo"
         >
-          <Redo className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          <Redo className="w-5 h-5" />
         </motion.button>
       </div>
       
-      {/* Additional controls on right side of screen */}
-      <div className="fixed top-3 right-[calc(2rem+160px)] flex items-center gap-2">
-        <motion.button
-          className="flex items-center justify-center h-9 px-3 gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm text-sm font-medium"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleShare}
-        >
-          <Share className="w-4 h-4" />
-          Share
-        </motion.button>
-
-        <motion.button
-          className="flex items-center justify-center h-9 w-9 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.02)' }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Users className="w-4 h-4" />
-        </motion.button>
-
-        <motion.button
-          className="flex items-center justify-center h-9 w-9 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"  
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.02)' }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Download className="w-4 h-4" />
-        </motion.button>
-        
-        {/* User Avatar */}
-        <motion.div 
-          className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-medium shadow-sm cursor-pointer"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <span className="text-sm font-medium">JS</span>
-        </motion.div>
-      </div>
+      {/* Share Button */}
+      <Button 
+        className="gap-2"
+        onClick={handleShare}
+      >
+        <Share className="w-4 h-4" />
+        Share
+      </Button>
+      
+      {/* User Avatar */}
+      <motion.div 
+        className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-medium shadow-md cursor-pointer"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        JS
+      </motion.div>
     </motion.div>
   );
 }

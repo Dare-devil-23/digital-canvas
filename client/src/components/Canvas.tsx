@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Stage, Layer, Line, Rect, Circle, Arrow, Text, Image, Transformer, Shape } from 'react-konva';
+import { Stage, Layer, Line, Rect, Circle, Arrow, Text, Image, Transformer } from 'react-konva';
 import { useSelector, useDispatch } from 'react-redux';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { RootState } from '../store/store';
@@ -196,33 +196,6 @@ export default function Canvas() {
                     x={element.x + element.width / 2}
                     y={element.y + element.height / 2}
                     radius={Math.max(Math.abs(element.width), Math.abs(element.height)) / 2}
-                    stroke={element.color}
-                    strokeWidth={element.strokeWidth}
-                    opacity={element.opacity || 1}
-                    name={element.id}
-                    onClick={() => dispatch(selectElement(element.id))}
-                    draggable={activeTool === ToolType.SELECT}
-                  />
-                );
-              } else if (element.type === 'triangle') {
-                // Calculate triangle points
-                const x = element.x;
-                const y = element.y;
-                const width = element.width;
-                const height = element.height;
-                
-                return (
-                  <Shape
-                    key={element.id}
-                    sceneFunc={(context, shape) => {
-                      context.beginPath();
-                      // Draw a triangle pointing down
-                      context.moveTo(x + width / 2, y + height); // Bottom center
-                      context.lineTo(x, y); // Top left
-                      context.lineTo(x + width, y); // Top right
-                      context.closePath();
-                      context.fillStrokeShape(shape);
-                    }}
                     stroke={element.color}
                     strokeWidth={element.strokeWidth}
                     opacity={element.opacity || 1}
