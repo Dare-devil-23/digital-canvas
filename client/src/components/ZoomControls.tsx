@@ -22,51 +22,40 @@ export default function ZoomControls() {
   
   return (
     <motion.div 
-      className="absolute bottom-4 right-4 flex items-center gap-3 z-10"
+      className="fixed bottom-4 right-4 flex items-center z-20 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800"
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
+      style={{
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+      }}
     >
+      {/* Zoom Out */}
+      <motion.button 
+        className="p-1.5 w-9 h-9 flex items-center justify-center relative border-r border-gray-200 dark:border-gray-800"
+        whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.05)' }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleZoomOut}
+        aria-label="Zoom out"
+      >
+        <Minus className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+      </motion.button>
+      
       {/* Zoom Level */}
-      <div className="bg-white dark:bg-uibg rounded-lg shadow-md flex items-center px-3 py-2 text-sm">
+      <div className="flex items-center px-2 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-200 dark:border-gray-800">
         <span>{zoomLevel}%</span>
       </div>
       
-      {/* Zoom Controls */}
-      <div className="bg-white dark:bg-uibg rounded-lg shadow-md flex">
-        {/* Zoom Out */}
-        <motion.button 
-          className="toolbar-button rounded-l-lg p-2 w-10 h-10 flex items-center justify-center relative border-r border-uiborder"
-          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleZoomOut}
-          aria-label="Zoom out"
-        >
-          <Minus className="w-5 h-5" />
-        </motion.button>
-        
-        {/* Zoom Reset */}
-        <motion.button 
-          className="toolbar-button p-2 w-10 h-10 flex items-center justify-center relative border-r border-uiborder"
-          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleResetZoom}
-          aria-label="Reset zoom"
-        >
-          <Search className="w-5 h-5" />
-        </motion.button>
-        
-        {/* Zoom In */}
-        <motion.button 
-          className="toolbar-button rounded-r-lg p-2 w-10 h-10 flex items-center justify-center relative"
-          whileHover={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleZoomIn}
-          aria-label="Zoom in"
-        >
-          <Plus className="w-5 h-5" />
-        </motion.button>
-      </div>
+      {/* Zoom In */}
+      <motion.button 
+        className="p-1.5 w-9 h-9 flex items-center justify-center relative"
+        whileHover={{ scale: 1.05, backgroundColor: 'rgba(0,0,0,0.05)' }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleZoomIn}
+        aria-label="Zoom in"
+      >
+        <Plus className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+      </motion.button>
     </motion.div>
   );
 }

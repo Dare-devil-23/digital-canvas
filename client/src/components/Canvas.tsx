@@ -204,6 +204,33 @@ export default function Canvas() {
                     draggable={activeTool === ToolType.SELECT}
                   />
                 );
+              } else if (element.type === 'triangle') {
+                // Calculate triangle points
+                const x = element.x;
+                const y = element.y;
+                const width = element.width;
+                const height = element.height;
+                
+                return (
+                  <Shape
+                    key={element.id}
+                    sceneFunc={(context, shape) => {
+                      context.beginPath();
+                      // Draw a triangle pointing down
+                      context.moveTo(x + width / 2, y + height); // Bottom center
+                      context.lineTo(x, y); // Top left
+                      context.lineTo(x + width, y); // Top right
+                      context.closePath();
+                      context.fillStrokeShape(shape);
+                    }}
+                    stroke={element.color}
+                    strokeWidth={element.strokeWidth}
+                    opacity={element.opacity || 1}
+                    name={element.id}
+                    onClick={() => dispatch(selectElement(element.id))}
+                    draggable={activeTool === ToolType.SELECT}
+                  />
+                );
               } else if (element.type === 'arrow') {
                 return (
                   <Arrow
